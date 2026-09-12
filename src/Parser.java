@@ -1,12 +1,10 @@
 public class Parser {
 
     private Scanner scan;
-    private char currentToken;
+    private Token currentToken;
 
     public Parser(byte[] input) {
-
         scan = new Scanner(input);
-
         currentToken = scan.nextToken();
     }
 
@@ -14,65 +12,69 @@ public class Parser {
         currentToken = scan.nextToken();
     }
 
-    private void match(char t) {
+    private void match(TokenType type) {
 
-        if (currentToken == t) {
-
+        if (currentToken.type == type) {
             nextToken();
-
         } else {
-
             throw new Error("syntax error");
         }
     }
 
     private void expr() {
-        digit();
+        number();
         oper();
     }
 
-    private void digit() {
+    private void number() {
 
-        if (Character.isDigit(currentToken)) {
+        if (currentToken.type == TokenType.NUMBER) {
 
-            System.out.println("push " + currentToken);
+            System.out.println("push " + currentToken.lexeme);
 
-            match(currentToken);
+            match(TokenType.NUMBER);
 
         } else {
-
             throw new Error("syntax error");
         }
     }
 
     private void oper() {
 
-        if (currentToken == '+') {
+        if (currentToken.type == TokenType.PLUS) {
 
-            match('+');
-            digit();
+            match(TokenType.PLUS);
+            number();
+
             System.out.println("add");
+
             oper();
 
-        } else if (currentToken == '-') {
+        } else if (currentToken.type == TokenType.MINUS) {
 
-            match('-');
-            digit();
+            match(TokenType.MINUS);
+            number();
+
             System.out.println("sub");
+
             oper();
 
-        } else if (currentToken == '*') {
+        } else if (currentToken.type == TokenType.MULT) {
 
-            match('*');
-            digit();
+            match(TokenType.MULT);
+            number();
+
             System.out.println("mul");
+
             oper();
 
-        } else if (currentToken == '/') {
+        } else if (currentToken.type == TokenType.DIV) {
 
-            match('/');
-            digit();
+            match(TokenType.DIV);
+            number();
+
             System.out.println("div");
+
             oper();
         }
     }
@@ -81,7 +83,7 @@ public class Parser {
 
         expr();
 
-        if (currentToken != '\0') {
+        if (currentToken.type != TokenType.EOF) {
             throw new Error("syntax error");
         }
     }

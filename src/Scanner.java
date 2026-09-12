@@ -16,34 +16,68 @@ public class Scanner {
     }
 
     private void advance() {
-        char ch = peek();
-
-        if (ch != '\0') {
+        if (peek() != '\0') {
             current++;
         }
     }
 
-    public char nextToken() {
+    private Token number() {
+
+        int start = current;
+
+        while (Character.isDigit(peek())) {
+            advance();
+        }
+
+        String n = new String(
+            input,
+            start,
+            current - start
+        );
+
+        return new Token(TokenType.NUMBER, n);
+    }
+
+    public Token nextToken() {
+
         char ch = peek();
 
-        if (Character.isDigit(ch)) {
+        if (ch == '0') {
             advance();
-            return ch;
+
+            return new Token(
+                TokenType.NUMBER,
+                Character.toString(ch)
+            );
+        }
+
+        if (Character.isDigit(ch)) {
+            return number();
         }
 
         switch (ch) {
+
             case '+':
+                advance();
+                return new Token(TokenType.PLUS, "+");
+
             case '-':
+                advance();
+                return new Token(TokenType.MINUS, "-");
+
             case '*':
+                advance();
+                return new Token(TokenType.MULT, "*");
+
             case '/':
                 advance();
-                return ch;
+                return new Token(TokenType.DIV, "/");
+
+            case '\0':
+                return new Token(TokenType.EOF, "EOF");
 
             default:
-                break;
+                throw new Error("lexical error at " + ch);
         }
-
-        return '\0';
     }
-
 }
