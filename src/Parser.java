@@ -1,34 +1,28 @@
 public class Parser {
 
-    private byte[] input;
-    private int current = 0;
+    private Scanner scan;
+    private char currentToken;
 
     public Parser(byte[] input) {
-        this.input = input;
+
+        scan = new Scanner(input);
+
+        currentToken = scan.nextToken();
     }
 
-    public void parse() {
-        expr();
-
-        // Verifica se toda a entrada foi consumida
-        if (peek() != '\0') {
-            throw new Error("Erro de sintaxe");
-        }
+    private void nextToken() {
+        currentToken = scan.nextToken();
     }
 
-    private char peek() {
-        if (current < input.length) {
-            return (char) input[current];
-        }
+    private void match(char t) {
 
-        return '\0';
-    }
+        if (currentToken == t) {
 
-    private void match(char expected) {
-        if (peek() == expected) {
-            current++;
+            nextToken();
+
         } else {
-            throw new Error("Erro de sintaxe");
+
+            throw new Error("syntax error");
         }
     }
 
@@ -38,46 +32,57 @@ public class Parser {
     }
 
     private void digit() {
-        if (Character.isDigit(peek())) {
 
-            System.out.println("push " + peek());
+        if (Character.isDigit(currentToken)) {
 
-            match(peek());
+            System.out.println("push " + currentToken);
+
+            match(currentToken);
 
         } else {
-            throw new Error("Erro de sintaxe");
+
+            throw new Error("syntax error");
         }
     }
 
     private void oper() {
 
-        if (peek() == '+') {
+        if (currentToken == '+') {
 
             match('+');
             digit();
             System.out.println("add");
             oper();
 
-        } else if (peek() == '-') {
+        } else if (currentToken == '-') {
 
             match('-');
             digit();
             System.out.println("sub");
             oper();
 
-        } else if (peek() == '*') {
+        } else if (currentToken == '*') {
 
             match('*');
             digit();
             System.out.println("mul");
             oper();
 
-        } else if (peek() == '/') {
+        } else if (currentToken == '/') {
 
             match('/');
             digit();
             System.out.println("div");
             oper();
+        }
+    }
+
+    public void parse() {
+
+        expr();
+
+        if (currentToken != '\0') {
+            throw new Error("syntax error");
         }
     }
 }
