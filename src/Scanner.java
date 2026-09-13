@@ -28,7 +28,6 @@ public class Scanner {
     }
 
     private Token number() {
-
         int inicio = current;
 
         while (Character.isDigit(peek())) {
@@ -45,7 +44,6 @@ public class Scanner {
     }
 
     private Token identifier() {
-
         int inicio = current;
 
         while (
@@ -61,9 +59,12 @@ public class Scanner {
             current - inicio
         );
 
-        
         if (nome.equals("let")) {
             return new Token(TokenType.LET, nome);
+        }
+
+        if (nome.equals("print")) {
+            return new Token(TokenType.PRINT, nome);
         }
 
         return new Token(TokenType.IDENT, nome);
@@ -75,12 +76,10 @@ public class Scanner {
 
         char ch = peek();
 
-     
         if (Character.isLetter(ch) || ch == '_') {
             return identifier();
         }
 
-      
         if (Character.isDigit(ch)) {
             return number();
         }

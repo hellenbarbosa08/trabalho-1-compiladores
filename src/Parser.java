@@ -13,6 +13,7 @@ public class Parser {
     }
 
     private void match(TokenType tipo) {
+
         if (tokenAtual.type == tipo) {
             proximoToken();
         } else {
@@ -26,14 +27,18 @@ public class Parser {
     }
 
     private void term() {
+
         if (tokenAtual.type == TokenType.NUMBER) {
+
             number();
 
         } else if (tokenAtual.type == TokenType.IDENT) {
+
             System.out.println("push " + tokenAtual.lexeme);
             match(TokenType.IDENT);
 
         } else {
+
             throw new Error("Erro de sintaxe");
         }
     }
@@ -44,25 +49,30 @@ public class Parser {
     }
 
     private void oper() {
+
         if (tokenAtual.type == TokenType.PLUS) {
+
             match(TokenType.PLUS);
             term();
             System.out.println("add");
             oper();
 
         } else if (tokenAtual.type == TokenType.MINUS) {
+
             match(TokenType.MINUS);
             term();
             System.out.println("sub");
             oper();
 
         } else if (tokenAtual.type == TokenType.MULT) {
+
             match(TokenType.MULT);
             term();
             System.out.println("mul");
             oper();
 
         } else if (tokenAtual.type == TokenType.DIV) {
+
             match(TokenType.DIV);
             term();
             System.out.println("div");
@@ -71,6 +81,7 @@ public class Parser {
     }
 
     private void letStatement() {
+
         match(TokenType.LET);
 
         String nome = tokenAtual.lexeme;
@@ -85,11 +96,41 @@ public class Parser {
         match(TokenType.SEMICOLON);
     }
 
-    public void parse() {
-        letStatement();
+    private void printStatement() {
 
-        if (tokenAtual.type != TokenType.EOF) {
+        match(TokenType.PRINT);
+
+        expr();
+
+        System.out.println("print");
+
+        match(TokenType.SEMICOLON);
+    }
+
+    private void statement() {
+
+        if (tokenAtual.type == TokenType.LET) {
+
+            letStatement();
+
+        } else if (tokenAtual.type == TokenType.PRINT) {
+
+            printStatement();
+
+        } else {
+
             throw new Error("Erro de sintaxe");
         }
+    }
+
+    private void statements() {
+
+        while (tokenAtual.type != TokenType.EOF) {
+            statement();
+        }
+    }
+
+    public void parse() {
+        statements();
     }
 }
