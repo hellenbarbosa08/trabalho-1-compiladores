@@ -2,10 +2,10 @@ public class Main {
 
     public static void main(String[] args) {
 
-        String input = "785*43*0/49";
+        String input = "let a = 75 + 1 - 4;";
 
-        Parser p = new Parser(input.getBytes());
+        Parser parser = new Parser(input.getBytes());
 
-        p.parse();
+        parser.parse();
     }
 }

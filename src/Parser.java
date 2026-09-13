@@ -1,90 +1,95 @@
 public class Parser {
 
-    private Scanner scan;
-    private Token currentToken;
+    private Scanner scanner;
+    private Token tokenAtual;
 
     public Parser(byte[] input) {
-        scan = new Scanner(input);
-        currentToken = scan.nextToken();
+        scanner = new Scanner(input);
+        tokenAtual = scanner.nextToken();
     }
 
-    private void nextToken() {
-        currentToken = scan.nextToken();
+    private void proximoToken() {
+        tokenAtual = scanner.nextToken();
     }
 
-    private void match(TokenType type) {
-
-        if (currentToken.type == type) {
-            nextToken();
+    private void match(TokenType tipo) {
+        if (tokenAtual.type == tipo) {
+            proximoToken();
         } else {
-            throw new Error("syntax error");
+            throw new Error("Erro de sintaxe");
+        }
+    }
+
+    private void number() {
+        System.out.println("push " + tokenAtual.lexeme);
+        match(TokenType.NUMBER);
+    }
+
+    private void term() {
+        if (tokenAtual.type == TokenType.NUMBER) {
+            number();
+
+        } else if (tokenAtual.type == TokenType.IDENT) {
+            System.out.println("push " + tokenAtual.lexeme);
+            match(TokenType.IDENT);
+
+        } else {
+            throw new Error("Erro de sintaxe");
         }
     }
 
     private void expr() {
-        number();
+        term();
         oper();
     }
 
-    private void number() {
-
-        if (currentToken.type == TokenType.NUMBER) {
-
-            System.out.println("push " + currentToken.lexeme);
-
-            match(TokenType.NUMBER);
-
-        } else {
-            throw new Error("syntax error");
-        }
-    }
-
     private void oper() {
-
-        if (currentToken.type == TokenType.PLUS) {
-
+        if (tokenAtual.type == TokenType.PLUS) {
             match(TokenType.PLUS);
-            number();
-
+            term();
             System.out.println("add");
-
             oper();
 
-        } else if (currentToken.type == TokenType.MINUS) {
-
+        } else if (tokenAtual.type == TokenType.MINUS) {
             match(TokenType.MINUS);
-            number();
-
+            term();
             System.out.println("sub");
-
             oper();
 
-        } else if (currentToken.type == TokenType.MULT) {
-
+        } else if (tokenAtual.type == TokenType.MULT) {
             match(TokenType.MULT);
-            number();
-
+            term();
             System.out.println("mul");
-
             oper();
 
-        } else if (currentToken.type == TokenType.DIV) {
-
+        } else if (tokenAtual.type == TokenType.DIV) {
             match(TokenType.DIV);
-            number();
-
+            term();
             System.out.println("div");
-
             oper();
         }
     }
 
-    public void parse() {
+    private void letStatement() {
+        match(TokenType.LET);
+
+        String nome = tokenAtual.lexeme;
+
+        match(TokenType.IDENT);
+        match(TokenType.EQ);
 
         expr();
 
-        if (currentToken.type != TokenType.EOF) {
-            throw new Error("syntax error");
+        System.out.println("pop " + nome);
+
+        match(TokenType.SEMICOLON);
+    }
+
+    public void parse() {
+        letStatement();
+
+        if (tokenAtual.type != TokenType.EOF) {
+            throw new Error("Erro de sintaxe");
         }
     }
 }

@@ -21,36 +21,66 @@ public class Scanner {
         }
     }
 
+    private void ignorarEspacos() {
+        while (Character.isWhitespace(peek())) {
+            advance();
+        }
+    }
+
     private Token number() {
 
-        int start = current;
+        int inicio = current;
 
         while (Character.isDigit(peek())) {
             advance();
         }
 
-        String n = new String(
+        String numero = new String(
             input,
-            start,
-            current - start
+            inicio,
+            current - inicio
         );
 
-        return new Token(TokenType.NUMBER, n);
+        return new Token(TokenType.NUMBER, numero);
+    }
+
+    private Token identifier() {
+
+        int inicio = current;
+
+        while (
+            Character.isLetterOrDigit(peek()) ||
+            peek() == '_'
+        ) {
+            advance();
+        }
+
+        String nome = new String(
+            input,
+            inicio,
+            current - inicio
+        );
+
+        
+        if (nome.equals("let")) {
+            return new Token(TokenType.LET, nome);
+        }
+
+        return new Token(TokenType.IDENT, nome);
     }
 
     public Token nextToken() {
 
+        ignorarEspacos();
+
         char ch = peek();
 
-        if (ch == '0') {
-            advance();
-
-            return new Token(
-                TokenType.NUMBER,
-                Character.toString(ch)
-            );
+     
+        if (Character.isLetter(ch) || ch == '_') {
+            return identifier();
         }
 
+      
         if (Character.isDigit(ch)) {
             return number();
         }
@@ -73,11 +103,19 @@ public class Scanner {
                 advance();
                 return new Token(TokenType.DIV, "/");
 
+            case '=':
+                advance();
+                return new Token(TokenType.EQ, "=");
+
+            case ';':
+                advance();
+                return new Token(TokenType.SEMICOLON, ";");
+
             case '\0':
                 return new Token(TokenType.EOF, "EOF");
 
             default:
-                throw new Error("lexical error at " + ch);
+                throw new Error("Erro lexico: " + ch);
         }
     }
 }
