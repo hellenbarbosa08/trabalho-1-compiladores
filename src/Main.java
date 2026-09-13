@@ -3,13 +3,18 @@ public class Main {
     public static void main(String[] args) {
 
         String input = """
-            let a = 50 + 33 - 1;
-            let b = 65 + 7;
-            print a + b + 4;
+            let a = 67 + 0;
+            let b = 21 + 2;
+            print a + b;
             """;
 
         Parser parser = new Parser(input.getBytes());
 
         parser.parse();
+
+        Interpretador interpretador =
+            new Interpretador(parser.output());
+
+        interpretador.run();
     }
 }

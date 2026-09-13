@@ -3,6 +3,8 @@ public class Parser {
     private Scanner scanner;
     private Token tokenAtual;
 
+    private String output = "";
+
     public Parser(byte[] input) {
         scanner = new Scanner(input);
         tokenAtual = scanner.nextToken();
@@ -13,7 +15,6 @@ public class Parser {
     }
 
     private void match(TokenType tipo) {
-
         if (tokenAtual.type == tipo) {
             proximoToken();
         } else {
@@ -21,8 +22,16 @@ public class Parser {
         }
     }
 
+    private void gerar(String comando) {
+        output += comando + "\n";
+    }
+
+    public String output() {
+        return output;
+    }
+
     private void number() {
-        System.out.println("push " + tokenAtual.lexeme);
+        gerar("push " + tokenAtual.lexeme);
         match(TokenType.NUMBER);
     }
 
@@ -34,7 +43,7 @@ public class Parser {
 
         } else if (tokenAtual.type == TokenType.IDENT) {
 
-            System.out.println("push " + tokenAtual.lexeme);
+            gerar("push " + tokenAtual.lexeme);
             match(TokenType.IDENT);
 
         } else {
@@ -54,28 +63,28 @@ public class Parser {
 
             match(TokenType.PLUS);
             term();
-            System.out.println("add");
+            gerar("add");
             oper();
 
         } else if (tokenAtual.type == TokenType.MINUS) {
 
             match(TokenType.MINUS);
             term();
-            System.out.println("sub");
+            gerar("sub");
             oper();
 
         } else if (tokenAtual.type == TokenType.MULT) {
 
             match(TokenType.MULT);
             term();
-            System.out.println("mul");
+            gerar("mul");
             oper();
 
         } else if (tokenAtual.type == TokenType.DIV) {
 
             match(TokenType.DIV);
             term();
-            System.out.println("div");
+            gerar("div");
             oper();
         }
     }
@@ -91,7 +100,7 @@ public class Parser {
 
         expr();
 
-        System.out.println("pop " + nome);
+        gerar("pop " + nome);
 
         match(TokenType.SEMICOLON);
     }
@@ -102,7 +111,7 @@ public class Parser {
 
         expr();
 
-        System.out.println("print");
+        gerar("print");
 
         match(TokenType.SEMICOLON);
     }
